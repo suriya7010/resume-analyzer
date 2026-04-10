@@ -1,0 +1,39 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: white;
+  color: white;
+}
+
+h2{
+    color: white;
+}
+.container {
+  padding: 20px;
+  text-align: center;
+}
+
+.card {
+  background: #1e293b;
+  padding: 20px;
+  margin: 15px auto;
+  border-radius: 12px;
+  width: 80%;
+  max-width: 600px;
+}
+
+.score {
+  font-size: 40px;
+  color: #22c55e;
+}
+
+.grid {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+ul {
+  text-align: left;
+}

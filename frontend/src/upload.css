@@ -1,0 +1,67 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Background */
+.upload-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #0f172a, #1e293b, #312e81);
+}
+
+/* Card */
+.upload-card {
+  background: #1e293b;
+  padding: 40px;
+  border-radius: 16px;
+  text-align: center;
+  width: 350px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.upload-card h1 {
+  margin-bottom: 10px;
+}
+
+.upload-card p {
+  color: #cbd5f5;
+  margin-bottom: 20px;
+}
+
+/* Input */
+.upload-card input {
+  margin: 15px 0;
+  color: white;
+}
+
+/* File name */
+.file-name {
+  font-size: 14px;
+  color: #22c55e;
+}
+
+/* Button */
+.upload-card button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 8px;
+  background: #6366f1;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.upload-card button:hover {
+  background: #4f46e5;
+}
+
+h1{
+    color: white;
+}

@@ -1,0 +1,137 @@
+CREATE TABLE employee (
+    empid   NUMBER PRIMARY KEY,
+    empname VARCHAR2(50),
+    salary  NUMBER
+);
+
+CREATE TABLE emp_audit (
+    empid       NUMBER,
+    action      VARCHAR2(20),
+    action_date DATE
+);
+
+CREATE OR REPLACE TRIGGER trg_emp_before_insert
+BEFORE INSERT ON employee
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('A new employee record is being inserted');
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_emp_audit
+AFTER INSERT OR UPDATE OR DELETE ON employee
+FOR EACH ROW
+BEGIN
+    IF INSERTING THEN
+        INSERT INTO emp_audit (empid, action, action_date)
+        VALUES (:NEW.empid, 'INSERT', SYSDATE);
+
+    ELSIF UPDATING THEN
+        INSERT INTO emp_audit (empid, action, action_date)
+        VALUES (:OLD.empid, 'UPDATE', SYSDATE);
+
+    ELSIF DELETING THEN
+        INSERT INTO emp_audit (empid, action, action_date)
+        VALUES (:OLD.empid, 'DELETE', SYSDATE);
+    END IF;
+END;
+/
+
+CREATE OR REPLACE VIEW emp_view AS
+SELECT empid, empname, salary FROM employee;
+
+CREATE OR REPLACE TRIGGER trg_instead_emp
+INSTEAD OF INSERT ON emp_view
+FOR EACH ROW
+BEGIN
+    INSERT INTO employee (empid, empname, salary)
+    VALUES (:NEW.empid, :NEW.empname, :NEW.salary);
+END;
+/
+
+
+
+CREATE TABLE books (
+    book_id   NUMBER PRIMARY KEY,
+    title     VARCHAR2(100),
+    author    VARCHAR2(50),
+    available VARCHAR2(3)   -- YES or NO
+);
+
+INSERT INTO books VALUES (1, 'The Alchemist', 'Paulo Coelho', 'YES');
+INSERT INTO books VALUES (2, 'Harry Potter', 'J K Rowling', 'YES');
+INSERT INTO books VALUES (3, 'C Programming', 'Dennis Ritchie', 'YES');
+
+SET SERVEROUTPUT ON;
+
+DECLARE
+    v_choice     NUMBER;
+    v_book_id    NUMBER;
+    v_title      VARCHAR2(100);
+    v_author     VARCHAR2(50);
+    v_available  VARCHAR2(3);
+BEGIN
+    LOOP
+        DBMS_OUTPUT.PUT_LINE('=== LIBRARY MANAGEMENT SYSTEM ===');
+        DBMS_OUTPUT.PUT_LINE('1. Add Book');
+        DBMS_OUTPUT.PUT_LINE('2. Update Book Availability');
+        DBMS_OUTPUT.PUT_LINE('3. Delete Book');
+        DBMS_OUTPUT.PUT_LINE('4. View Books');
+        DBMS_OUTPUT.PUT_LINE('5. Exit');
+
+        v_choice := &choice;
+
+        IF v_choice = 1 THEN
+            v_book_id := &book_id;
+            v_title := '&title';
+            v_author := '&author';
+            v_available := 'YES';
+
+            INSERT INTO books 
+            VALUES (v_book_id, v_title, v_author, v_available);
+
+            COMMIT;
+            DBMS_OUTPUT.PUT_LINE('Book added successfully.');
+
+        ELSIF v_choice = 2 THEN
+            v_book_id := &book_id;
+            v_available := '&available';
+
+            UPDATE books
+            SET available = v_available
+            WHERE book_id = v_book_id;
+
+            COMMIT;
+            DBMS_OUTPUT.PUT_LINE('Book availability updated.');
+
+        ELSIF v_choice = 3 THEN
+            v_book_id := &book_id;
+
+            DELETE FROM books
+            WHERE book_id = v_book_id;
+
+            COMMIT;
+            DBMS_OUTPUT.PUT_LINE('Book deleted successfully.');
+
+        ELSIF v_choice = 4 THEN
+            DBMS_OUTPUT.PUT_LINE('ID | TITLE | AUTHOR | AVAILABLE');
+            DBMS_OUTPUT.PUT_LINE('-----------------------------------');
+
+            FOR rec IN (SELECT * FROM books) LOOP
+                DBMS_OUTPUT.PUT_LINE(
+                    rec.book_id || ' | ' ||
+                    rec.title || ' | ' ||
+                    rec.author || ' | ' ||
+                    rec.available
+                );
+            END LOOP;
+
+        ELSIF v_choice = 5 THEN
+            EXIT;
+
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('Invalid choice. Try again.');
+        END IF;
+
+    END LOOP;
+END;
+/
